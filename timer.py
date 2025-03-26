@@ -1,5 +1,5 @@
 import logging
-from telegram.ext import Application, MessageHandler, filters, CommandHandler
+from telegram.ext import Application, MessageHandler, filters, CommandHandler, CallbackContext
 from config import BOT_TOKEN
 
 # Запускаем логгирование
@@ -12,8 +12,9 @@ logger = logging.getLogger(__name__)
 TIMER = 5  # таймер на 5 секунд
 
 
-def remove_job_if_exists(name, context):
-
+def remove_job_if_exists(name, context: CallbackContext):
+    """Удаляем задачу по имени.
+    Возвращаем True если задача была успешно удалена."""
     current_jobs = context.job_queue.get_jobs_by_name(name)
     if not current_jobs:
         return False
@@ -22,10 +23,12 @@ def remove_job_if_exists(name, context):
     return True
 
 
-async def set_timer(update, context):
-
+# Обычный обработчик, как и те, которыми мы пользовались раньше.
+async def set_timer(update, context: CallbackContext):
+    """Добавляем задачу в очередь"""
     chat_id = update.effective_message.chat_id
-
+    # Добавляем задачу в очередь
+    # и останавливаем предыдущую (если она была)
     job_removed = remove_job_if_exists(str(chat_id), context)
     context.job_queue.run_once(task, TIMER, chat_id=chat_id, name=str(chat_id), data=TIMER)
 
@@ -38,6 +41,7 @@ async def set_timer(update, context):
 async def task(context):
     """Выводит сообщение"""
     await context.bot.send_message(context.job.chat_id, text=f'КУКУ! 5c. прошли!')
+
 
 async def unset(update, context):
     """Удаляет задачу, если пользователь передумал"""

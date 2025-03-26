@@ -12,6 +12,7 @@ logger = logging.getLogger(__name__)
 
 async def start(update, context):
     user = update.effective_user
+    print(context.args)
     await update.message.reply_html(
         rf"Привет {user.mention_html()}! Я эхо-бот. Напишите мне что-нибудь, и я пришлю это назад!",
     )

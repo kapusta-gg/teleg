@@ -1,6 +1,9 @@
 import logging
 from telegram.ext import Application, MessageHandler, filters
+from telegram.ext import ApplicationBuilder
 from config import BOT_TOKEN
+
+proxy_url = "socks5://127.0.0.1:8000"
 
 # Запускаем логгирование
 logging.basicConfig(
